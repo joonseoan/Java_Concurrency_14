@@ -60,24 +60,44 @@
  * <p>
  * Before we do, we have to understand that when working with threads, we are at the mercy of the JVM
  * and the operating system when it comes to when threads are scheduled to run
+ * <p>
+ *
+ * [IMPORTANT]
+ * Thread terminates when it returns from its `run` method either implicitly because it reaches the
+ * method's end or explicitly because it executes a return statement. Now a common mistake when creating
+ * and running threads is to call this thread instance `run` method instead of the *** `start`*** method.
+ * JVM calls `run` method but we do not call `run` method.
+ *
  */
 
 public class Main {
   public static void main(String[] args) {
     // single process in a heap memory
     // There is a main thread in `System`
-    System.out.println(ThreadColor.ANSI_PURPLE + "Hello rom the 'main thread'.");
+    System.out.println(ThreadColor.ANSI_PURPLE + "Hello from the 'main thread'.");
 
+    // 1. [subclass]
     // [Kick off a thread that is going to run some code]
     // So we need a way to tell the thread what code want to run.
     // *** We are going to do that by creating a subclass of the thread class and then
     // overriding the `run` method. So rather than creating a thread instance,
     // we are going to create an instance of our subclass by extending `Thread` interface.
-    Thread anotherThread = new AnotherThread();
+    Thread anotherThread1 = new AnotherThread();
     // we will use `start` method. What it does is enable JVM to run the `run` method for the thread.
-    anotherThread.start();
+    anotherThread1.start();
 
-    // [Using anonymous class.]
+    // using `setName` to deliver the parameter to the `run` method.
+    Thread anotherThread2 = new AnotherThread2();
+    anotherThread2.setName("==== Another Thread2 ====");
+
+    // [IMPORTANT]
+    // if we use `anotherThread2.run()`, it won't generate an error but
+    // it will bring up the strange result.
+    // anotherThread2.run(); // it show "Hello from main method!!!"
+
+    anotherThread2.start();
+
+    // 2. [subclass - using anonymous class.]
     // when using anonymous class, we have to start the thread immediately,
     // so that another consideration when deciding whether to use a named or an anonymous class.
     // Of course, the name class is the one that we already defined above, for example.
@@ -89,6 +109,41 @@ public class Main {
       }
     }.start();
 
+    /**
+     * When using subclass and when using Runnable Interface?
+     * The most of time developers use the Runnable way of doing things.
+     * The reason is that it is more convenient and there is also many methods
+     * in the Java api that want a Runnable interface passed to them.
+     *
+     * For example since the introduction of Lambda expressions, it becomes more convenient
+     * to use anonymous runnable instances. So when we have a choice because we are not calling a method
+     * that requires one or the other, there is not really a right or wrong answer.
+     * But the most of the developer use Runnable interface because it is more flexible.
+     */
+
+    // Thread terminates when it returns from its run method.
+
+    // 3. [Runnable Interface]
+    // It is similar to the way of creating threads, we need to implement `run` method.
+    // However, instead of implementing the run method of a class that subclass thread,
+    // We can have any class implement the runnable interface and then
+    // all we have to do is to add a run method to that class.
+    // Of course, we will then want to write the code in the run mehtod.
+    Thread myRunnableClass = new Thread(new MyRunnable());
+    // need to use start method as well.
+    myRunnableClass.start();
+
+    // 4. [Runnable Interface - using anonymous class]
+    Thread myRunnableAnonymousClass = new Thread(
+            new MyRunnable() {
+              @Override
+              public void run() {
+                System.out.println(ThreadColor.ANSI_RED + "Hello from the anonymous class's implementation of run()");
+              }
+            }
+    );
+    myRunnableAnonymousClass.start();
+
     // Now this runs in different order. It can run at the second
     // or third after Thread subclass works.
     // It means that we can't guarantee that it runs on the consistent order.
@@ -96,8 +151,10 @@ public class Main {
 
     // [IMPORTANT]
     // It will generate IllegalThreadStateException.
-    // Using a subclass of Thread means that we have to define the run method once
+    // Using a subclass of Thread means that we have to define 'the run method once'
     // but we cannot reuse the same instance!!!!
+    // BTW, we can create another instance and can call it (It is ok.)
     //    anotherThread.start();
+
   }
 }
