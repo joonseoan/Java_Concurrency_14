@@ -1,3 +1,5 @@
+import counter_2.RunCounter;
+
 /**
  * A `process` is a unit of execution that has its own memory space.
  * Each instance of a Java Virtual Machine (JVM) runs as a process (This is not true
@@ -72,6 +74,17 @@
 
 public class Main {
   public static void main(String[] args) {
+    System.out.println("");
+    System.out.println("---------------- Counter -------------------");
+    System.out.println("");
+
+    RunCounter.runCounter();
+
+    /* ----------------------- Basic Concept -----------------------*/
+    System.out.println("");
+    System.out.println("--------------------- Basic Concept --------------" );
+    System.out.println("");
+
     // single process in a heap memory
     // There is a main thread in `System`
     System.out.println(ThreadColor.ANSI_PURPLE + "Hello from the 'main thread'.");
@@ -143,6 +156,57 @@ public class Main {
             }
     );
     myRunnableAnonymousClass.start();
+
+    // It is for #6 to see interrupt and join
+    Thread runnableAnonymousJoin = new Thread(
+            new MyRunnable() {
+              @Override
+              public void run() {
+                try {
+                  // `2000`, just in case anotherThread2 is not terminated,
+                  // the app will be crashed. So just in case, it adds the timeout.
+                  // without 2000, we need to wait for 3 seconds.
+                  //  anotherThread2.join(2000);
+
+                  // It works only after the `anotherThread2` is terminated.
+                  anotherThread2.join();
+
+                  System.out.println(ThreadColor.ANSI_RED + "AnotherThread terminated or timed out. I am running again.");
+                  // [IMPORTANT]
+                  // Like sleep, `join` also can be terminated prematurely if it is interrupted by another method.
+                } catch (InterruptedException err) {
+                  System.out.println(ThreadColor.ANSI_RED + "I could not wait after all. I was interrupted");
+                }
+              }
+            }
+    );
+
+    runnableAnonymousJoin.start();
+
+    // 5. [Interrupt with subclass containing sleep
+    // anotherThread2 is immediately terminated.
+    // anotherThread2.interrupt();
+
+    /**
+     * So by using sleep and interrupt methods,
+     * we have seen that we can put a thread to sleep, and it is possible to get it to wake up periodically
+     * to see if there's any work for the thread to do.
+     *
+     * So lets say we have got a situation where we know that a thread can't continue
+     * to execute (might be because of a long calculation) until another thread's terminated
+     * For example, we might know that there won't be any data to process until the thread
+     * is complete fetching the data from database. So in that scenario rather than waking up the thread
+     * periodically to see if there's any data, we can `join` the thread to the thread that is fetching
+     * the data. When we join the thread, what happens is the first thread will wait for the second thread
+     * to terminate and then it will continue to execute.
+     *
+     * Join can be used with Runnable or subclass thread.
+     */
+
+    // 6. Join with Runnable Interface
+
+
+
 
     // Now this runs in different order. It can run at the second
     // or third after Thread subclass works.
