@@ -10,7 +10,7 @@ import counter_2.RunCounter;
  * If one Java application is running, and we run another one, each application
  * has its own memory space of `heap`. The first Java application can't
  * access the heap that belongs to the second Java application. In other words,
- * the heap is not shared between them. They each have their own.
+ * the heap is not shared between applications. They each have their own.
  * <p>
  * A `Thread` is a unit of execution within a process. Each process can have multiple `threads`.
  * In Java, every `process` (or `application`) has at least one thread, the `main thread`
@@ -20,10 +20,10 @@ import counter_2.RunCounter;
  * or in `other threads` that we explicitly create.
  * <p>
  * Creating a thread does not require as many resources as creating a process. Every thread
- * created by a process shares the process's memory and files. The can create problems!!!!!
+ * created by a process shares the process's memory and files. ---> This can create problems!!!!!
  * <p>
  * In addition to the process's memory, or heap, each thread has what's called a `thread stack`,
- * which is the memory that only that thread can access.
+ * which is the memory that only that each thread can access.
  * <p>
  * So every Java application runs as a single `process`, and each process can have multiple `threads`.
  * Every process has a `heap`, and every thread has a `thread stack`.
@@ -37,17 +37,19 @@ import counter_2.RunCounter;
  * in a linear fashion. The main thread won't be able to do anything else while it is waiting for the data.
  * <p>
  * Another way of putting this is that the execution of the main thread will be suspended. It has to wait
- * for the data to be returned before it can execute the next line of code. To the user, this could appear
- * as if our application died or is frozen, especially when we are dealing with a UI application.
+ * for the data to be returned from DB before it can execute the next line of code.
+ * To the user, this could appear as if our application died or is frozen,
+ * especially when we are dealing with a UI application.
  * <p>
  * Instead of tying up the main thread, we can create another thread and execute the long-running task
  * on that thread. This would free up the main thread, so that it can continue executing. It can report
  * progress or accept user input while the long-running task continues to execute in the background.
  * <p>
- * The second reason we might want to use threads is because an API requires us to provide one. Sometimes
- * we have to provide the code that will run when a method we have called reaches a certain point in it's
- * execution. In this instance, we usually do not crate the thread. We pass in the code that we want to
- * run on the thread.
+ * The second reason we might want to use threads are because an API requires us to provide one.
+ * Sometimes we have to provide the code that will run when a method we have called reaches
+ * a certain point in its execution. In this instance, we usually do not create the thread.
+ * We pass in the code that we want to run on the thread. (interrupt the current running code and run
+ * a new provided code at that point)
  * <p>
  * [IMPORTANT]
  * That brings us to `concurrency`, which refers to an application doing more than one thing at a time.
@@ -68,17 +70,24 @@ import counter_2.RunCounter;
  * Thread terminates when it returns from its `run` method either implicitly because it reaches the
  * method's end or explicitly because it executes a return statement. Now a common mistake when creating
  * and running threads is to call this thread instance `run` method instead of the *** `start`*** method.
- * JVM calls `run` method but we do not call `run` method.
+ * JVM calls `run` method, but we do not call `run` method.
  *
  */
 
 public class Main {
   public static void main(String[] args) {
     System.out.println("");
-    System.out.println("---------------- Counter -------------------");
+    System.out.println("---------------- Racing (Synchronization) -------------------");
     System.out.println("");
 
+    RunCounter.runRacing();
+
     RunCounter.runCounter();
+    System.out.println("");
+    System.out.println("---------------- Interfering -------------------");
+    System.out.println("");
+
+//    RunCounter.runCounter();
 
     /* ----------------------- Basic Concept -----------------------*/
     System.out.println("");
