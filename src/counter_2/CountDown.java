@@ -8,11 +8,11 @@ public class CountDown {
   // even though we use the same CountDown instance.
   /**
    * Why?
-   * - Heap memory. The heap memory is for a process or application.
+   * - Heap memory. The heap memory is for a `process` or `application`.
    *   The heap memory is the one that all threads share.
    *
-   *   Also, every thread has a thread stack and that is a memory that
-   *   thread can access. In other words, thread on can't access thread two stack vice versa.
+   *   Also, every thread has a `thread stack` and that is a memory that
+   *   thread can access. In other words, thread can't access two `thread stacks`.
    *   But they both can access to the heap memory. The `local variables` are stored
    *   in the thread stack. That means that each thread has its own copy of
    *   local variable. In contrast, the memory required to store an object instance value
@@ -20,22 +20,20 @@ public class CountDown {
    *   with the same object, they in fact share the same object or share that object. So they do
    *   not have their own copy as such and so when one thread changes the values of one of the objects
    *   instance variable, the other thread will see the new value from that point forward.
-   *
-   *
    */
   private int i;
-  // Interference
+  // [Interference]
   // public void doCountdown() {
 
-  // Synchronization with local variable
+  // [Synchronization] with local variable
   // 1) We can add `synchronized` keyword in method name
   //  public synchronized void doCountdown() {
 
   public void doCountdown() {
 
-    // Required when specifying `synchronized` on the method
-
-    // However when we use it directly for for-loop
+    // [IMPORTANT]
+    // Required when specifying `synchronized` on the method declaration.
+    // However, when we use it directly for for-loop
     // we need to do something differently because String is object to use heap memory
      String color;
 
@@ -54,6 +52,7 @@ public class CountDown {
 
     // ----------- [IMPORTANT] -------------
 
+    // 1) Without `synchronized`
     // By using instance variable in shared heap memory
     // When we are using instance variable, JVM allocated the space for `i`
     // to the shared heap memory. In this case, the two threads in `main method`
@@ -70,7 +69,7 @@ public class CountDown {
     // [Thread interference]
     // 1. The one thread works with 'i',
     // 2. and then the execution of the one thread will be suspended (because of the end of method)
-    // 3. The two thread starts working for the updated 'i' from the one thread.
+    // 3. The second thread start working for the updated 'i' from the first thread.
     // 4. Therefore, it does skip the previous value that was run by the other thread.
 
     // [IMPORTANT] There would not be a problem if both threads were only reading the shared resource
@@ -79,14 +78,14 @@ public class CountDown {
 
     // Sometimes the specific possible suspension point does not work.
     // Over here, the potential suspense point within the 'print statement itself'.
-    // Because Thread 2 finish printing 4, and then it is suspended. After that Thread 1
+    // Because Thread 2 finishes printing 4, and then it is suspended. After that Thread 1
     // executes and then decrementing 'i', and then suspended before printing. In the meantime,
     // Thread 2 executes, decremented 'i', and printed the number. After this, Thread 1 executes printing.
     // that is what's happening here. (4, 2, 3, 1) --> out of order.
 
     // 2) Synchronization
     synchronized (this) {
-      // when we use the local variable and when apply synchronized for the for loop
+      // when we use the field variable and when apply synchronized for the for loop
       for (i = 10; i > 0; i--) {
         System.out.println(color + Thread.currentThread().getName() + ": i = " + i);
       }
