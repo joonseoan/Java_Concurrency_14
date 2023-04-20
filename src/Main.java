@@ -1,9 +1,10 @@
-import counter_2.RunCounter;
-
 /**
  * A `process` is a unit of execution that has its own memory space.
- * Each instance of a Java Virtual Machine (JVM) runs as a process (This is not true
- * for all JVM implementations, but for most of them). When we run a Java console application,
+ * Each instance (whatever it is a class instance) of a Java Virtual Machine (JVM) runs
+ * as a process ar an application (This is not true for all JVM implementations, but for most of them).
+ * For instance, an API class instance or the custom class instance
+ * we wrote can be a `process` or `application` when they run on JVM.
+ * More specifically when we run a Java console application,
  * we are kicking off a `process`. When we run a JavaFX, we are kicking off a 'process'.
  * <p>
  * The term of `process` and `application` can be used interchangeably.
@@ -12,23 +13,23 @@ import counter_2.RunCounter;
  * access the heap that belongs to the second Java application. In other words,
  * the heap is not shared between applications. They each have their own.
  * <p>
- * A `Thread` is a unit of execution within a process. Each process can have multiple `threads`.
+ * A `Thread` is `a unit of execution` within a `process` or an `application`. Each process can have multiple `threads`.
  * In Java, every `process` (or `application`) has at least one thread, the `main thread`
  * (for UI applications, this is called the JavaFx application thread). In fact, just about every
  * Java process also has multiple system threads that handle tasks like memory management and I/O.
- * The developers don't explicitly create and code those threads. Our code runs on the `main thread,`
- * or in `other threads` that we explicitly create.
+ * The developers don't explicitly create and code those JAVA API threads when our code runs on the `main thread,` ---> ???
+ * or in `other custom threads` that we explicitly create.
  * <p>
  * Creating a thread does not require as many resources as creating a process. Every thread
  * created by a process shares the process's memory and files. ---> This can create problems!!!!!
  * <p>
  * In addition to the process's memory, or heap, each thread has what's called a `thread stack`,
- * which is the memory that only that each thread can access.
+ * which is the memory that only each thread can access.
  * <p>
  * So every Java application runs as a single `process`, and each process can have multiple `threads`.
  * Every process has a `heap`, and every thread has a `thread stack`.
  * <p>
- * Why would wen want to use multiple threads in out application? Why not just stick with the main thread?
+ * Why would we want to use multiple threads in an application? Why not just stick with the main thread?
  * There are two main reasons.
  * <p>
  * First of all, we sometimes want to perform a task that is going to take a long time.
@@ -48,9 +49,10 @@ import counter_2.RunCounter;
  * The second reason we might want to use threads are because an API requires us to provide one.
  * Sometimes we have to provide the code that will run when a method we have called reaches
  * a certain point in its execution. In this instance, we usually do not create the thread.
- * We pass in the code that we want to run on the thread. (interrupt the current running code and run
- * a new provided code at that point)
+ * We pass in the code that we want to run on the thread. ***** (interrupt the current running code and run
+ * a new provided code at that point) ****
  * <p>
+ *
  * [IMPORTANT]
  * That brings us to `concurrency`, which refers to an application doing more than one thing at a time.
  * Now, that does not necessarily mean that the application is doing more than one thing at the same time.
@@ -71,21 +73,20 @@ import counter_2.RunCounter;
  * method's end or explicitly because it executes a return statement. Now a common mistake when creating
  * and running threads is to call this thread instance `run` method instead of the *** `start`*** method.
  * JVM calls `run` method, but we do not call `run` method.
- *
  */
 
 public class Main {
   public static void main(String[] args) {
-    System.out.println("");
-    System.out.println("---------------- Racing (Synchronization) -------------------");
-    System.out.println("");
-
-    RunCounter.runRacing();
-
-    RunCounter.runCounter();
-    System.out.println("");
-    System.out.println("---------------- Interfering -------------------");
-    System.out.println("");
+//    System.out.println("");
+//    System.out.println("---------------- Racing (Synchronization) -------------------");
+//    System.out.println("");
+//
+//    RunCounter.runRacing();
+//
+//    RunCounter.runCounter();
+//    System.out.println("");
+//    System.out.println("---------------- Interfering -------------------");
+//    System.out.println("");
 
 //    RunCounter.runCounter();
 
@@ -108,6 +109,7 @@ public class Main {
     // we will use `start` method. What it does is enable JVM to run the `run` method for the thread.
     anotherThread1.start();
 
+    // [IMPORTANT!!!!]
     // using `setName` to deliver the parameter to the `run` method.
     Thread anotherThread2 = new AnotherThread2();
     anotherThread2.setName("==== Another Thread2 ====");
@@ -120,10 +122,10 @@ public class Main {
     anotherThread2.start();
 
     // 2. [subclass - using anonymous class.]
-    // when using anonymous class, we have to start the thread immediately,
+    // when using anonymous class, we have to start the thread immediately,[IMPORTANT!!!]
     // so that another consideration when deciding whether to use a named or an anonymous class.
     // Of course, the name class is the one that we already defined above, for example.
-    // In result, it runs after the another thread, not in the `first thread`
+    // In result, it runs after `anotherThread`, not in the `first thread`
     // Once again, the Thread does not generate the same order with main thread.!
     new Thread() {
       public void run() {
@@ -133,12 +135,12 @@ public class Main {
 
     /**
      * When using subclass and when using Runnable Interface?
-     * The most of time developers use the Runnable way of doing things.
+     * The most of time, developers use the Runnable way of doing things.
      * The reason is that it is more convenient and there is also many methods
      * in the Java api that want a Runnable interface passed to them.
      *
      * For example since the introduction of Lambda expressions, it becomes more convenient
-     * to use anonymous runnable instances. So when we have a choice because we are not calling a method
+     * to use Runnable interface. So when we have a choice because we are not calling a method
      * that requires one or the other, there is not really a right or wrong answer.
      * But the most of the developer use Runnable interface because it is more flexible.
      */
@@ -148,12 +150,13 @@ public class Main {
     // 3. [Runnable Interface]
     // It is similar to the way of creating threads, we need to implement `run` method.
     // However, instead of implementing the run method of a class that subclass thread,
-    // We can have any class implement the runnable interface and then
+    // We can have any class implement the runnable interface and then ---> only run method can be available?
     // all we have to do is to add a run method to that class.
-    // Of course, we will then want to write the code in the run mehtod.
+    // Of course, we will then want to write the code in the run method.
     Thread myRunnableClass = new Thread(new MyRunnable());
     // need to use start method as well.
     myRunnableClass.start();
+
 
     // 4. [Runnable Interface - using anonymous class]
     Thread myRunnableAnonymousClass = new Thread(
@@ -177,10 +180,12 @@ public class Main {
                   // without 2000, we need to wait for 3 seconds.
                   //  anotherThread2.join(2000);
 
-                  // It works only after the `anotherThread2` is terminated.
+                  // join should work with sleep only?
                   anotherThread2.join();
 
+                  // It works only after the `anotherThread2` is terminated.
                   System.out.println(ThreadColor.ANSI_RED + "AnotherThread terminated or timed out. I am running again.");
+
                   // [IMPORTANT]
                   // Like sleep, `join` also can be terminated prematurely if it is interrupted by another method.
                 } catch (InterruptedException err) {
@@ -192,7 +197,7 @@ public class Main {
 
     runnableAnonymousJoin.start();
 
-    // 5. [Interrupt with subclass containing sleep
+    // 5. [Interrupt the subclass containing sleep
     // anotherThread2 is immediately terminated.
     // anotherThread2.interrupt();
 
@@ -214,20 +219,16 @@ public class Main {
 
     // 6. Join with Runnable Interface
 
-
-
-
     // Now this runs in different order. It can run at the second
     // or third after Thread subclass works.
     // It means that we can't guarantee that it runs on the consistent order.
     System.out.println(ThreadColor.ANSI_PURPLE + "Hello again from the 'main thread'!!!");
 
-    // [IMPORTANT]
+    // [!!!!IMPORTANT!!!]
     // It will generate IllegalThreadStateException.
     // Using a subclass of Thread means that we have to define 'the run method once'
     // but we cannot reuse the same instance!!!!
     // BTW, we can create another instance and can call it (It is ok.)
     //    anotherThread.start();
-
   }
 }

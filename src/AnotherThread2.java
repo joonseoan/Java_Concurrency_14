@@ -5,6 +5,7 @@ public class AnotherThread2 extends Thread {
     System.out.println(ThreadColor.ANSI_CYAN + "Hello from " + currentThread().getName());
 
     try {
+      System.out.println("");
       Thread.sleep(3000);
       // [IMPORTANT]
       // Like join, `sleep` also can be terminated prematurely if it is interrupted by another method.
@@ -14,6 +15,7 @@ public class AnotherThread2 extends Thread {
       // It will call without 3 seconds.
       System.out.println(ThreadColor.ANSI_CYAN + "Another thread woke me up!");
       // for .interrupt method. Then, we would not get the `System.out.println` below
+      // we need to put return!!
       return;
     }
 
