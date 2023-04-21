@@ -9,6 +9,7 @@ public class CountdownThread extends Thread {
 
   @Override
   public void run() {
+    // method, field name, and local variable
     threadCountdown.doCountdown();
   }
 }

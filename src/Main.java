@@ -1,3 +1,5 @@
+import counter_2.RunCounter;
+
 /**
  * A `process` is a unit of execution that has its own memory space.
  * Each instance (whatever it is a class instance) of a Java Virtual Machine (JVM) runs
@@ -77,17 +79,19 @@
 
 public class Main {
   public static void main(String[] args) {
-//    System.out.println("");
-//    System.out.println("---------------- Racing (Synchronization) -------------------");
-//    System.out.println("");
-//
-//    RunCounter.runRacing();
-//
-//    RunCounter.runCounter();
-//    System.out.println("");
-//    System.out.println("---------------- Interfering -------------------");
-//    System.out.println("");
+    System.out.println("");
+    System.out.println("---------------- Racing (Synchronization) -------------------");
+    System.out.println("");
 
+    // FIELD VARIABLE THREAD WITH SYNCHRONIZED
+    RunCounter.runRacing();
+
+    System.out.println("");
+    System.out.println("---------------- Interfering -------------------");
+    System.out.println("");
+
+    // FIELD VARIABLE THREAD WITHOUT SYNCHRONIZED
+    // LOCAL VARIABLE THREAD
 //    RunCounter.runCounter();
 
     /* ----------------------- Basic Concept -----------------------*/
