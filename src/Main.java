@@ -1,4 +1,5 @@
 import counter_2.RunCounter;
+import messages_3.RunMessages;
 
 /**
  * A `process` is a unit of execution that has its own memory space.
@@ -79,6 +80,14 @@ import counter_2.RunCounter;
 
 public class Main {
   public static void main(String[] args) {
+    System.out.println("");
+    System.out.println("---------------- Racing (Synchronization) -------------------");
+    System.out.println("");
+
+    RunMessages.runMessages1();
+
+    // [IMPORTANT!]
+    // https://www.w3schools.com/java/java_threads.asp
     System.out.println("");
     System.out.println("---------------- Racing (Synchronization) -------------------");
     System.out.println("");

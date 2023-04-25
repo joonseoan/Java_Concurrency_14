@@ -17,12 +17,16 @@ public class RunCounter {
 
     // [IMPORTANT]
     // (1) For testing local variable
-    // BTW, the local variable would not have interfering
-    // if we intentionally interfere the threads.
+    // BTW, the local variable would not have interfering.
     // And, also, each thread in for loop is in disorder.
 
-     t1.start();
-     t2.start();
+    /*
+    * For thread vs thread, we can use `synchronized` in the method that wrapped by run() method.,
+    * For main vs thread, we can use `thread.isAlive()`
+    * */
+
+    t1.start();
+    t2.start();
   }
 
   // Racing - Synchronization
@@ -31,7 +35,7 @@ public class RunCounter {
 
     // We can use "SYNCHRONIZATION" to control shared heap memory (instance field).
     // We can synchronize methods and statements.
-    // When we can synchronize methods, only one thread can execute that at a time.
+    // When we can synchronize methods so that only one thread can execute that at a time.
     // So when a thread is executing the method, or other threads that we want to call,
     // or any other synchronized method in that class will suspend until the thread running the method exits.
     // It will always have the same result.
@@ -50,12 +54,15 @@ public class RunCounter {
 
       public ConcurrencyLockExample(Resource r){
 		    this.resource = r;
-		   this.lock = new ReentrantLock();
+		    // [IMPORTANT]: Synchronization is reenterant.
+		    this.lock = new ReentrantLock();
 	    }
 
       What that means is that
-      if a thread acquires an object's lock, then thread can keep executing
+      if a thread acquires an object's lock and, within the synchronized code, it calls a method
+      that using the same object to synchronize same code. The thread can keep executing
       because it already has the object's `lock`.
+
       In other words, a thread can acquire a lock it already owns. Now if this wasn't the case,
       synchronization would be a lot trickier.
 
@@ -63,7 +70,7 @@ public class RunCounter {
       Now, we'll sometimes see the term `critical section` used
       when discussing threads and synchronization, `critical section` just refers to the code
       that's referencing a shared resource like a field variable.
-      Only one thread at a time should be able to execute a critical section.
+      Only one thread at a time should be able to execute a *** critical section ****.
 
       [Thread Safe]
       Now, we'll also see the term `thread safe` used. When a class or a method is thread safe,
@@ -84,6 +91,13 @@ public class RunCounter {
       we *** really want to keep the code we synchronize to *** an absolute minimum***. So at this point,
       we've now talked about and learned that we can prevent thread interference or a race condition
       by synchronizing critical sections of code.
+
+      Let's go ahead now and look at methods that can only be called within synchronized code,
+      namely the weight, notify, and notify all methods. The classic example that demonstrates the use
+      of these two methods is the `producer` and `consumer` example.
+
+
+
     * */
 
     CountDown cd = new CountDown();

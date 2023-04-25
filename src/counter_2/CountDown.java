@@ -27,7 +27,6 @@ public class CountDown {
   private int i;
 
   public void doCountdown() {
-
     // [IMPORTANT]
     // Required to specify `synchronized` on the method declaration like 'public synchronized void doCountdown() {}'
     // However, when we use it directly for for-loop
@@ -51,7 +50,6 @@ public class CountDown {
 
     // ----------- [IMPORTANT] -------------
     // 3) Using Synchronization
-
     synchronized (this) {
       // when we use the field variable and when apply `synchronized` for the for loop
       for (i = 10; i > 0; i--) {
@@ -91,9 +89,9 @@ public class CountDown {
     // Thread 2 executes, decremented 'i', and printed the number. After this, Thread 1 executes printing.
     // that is what's happening here. (4, 2, 3, 1) --> out of order.
 
-//    for (i = 10; i > 0; i--) {
-//      System.out.println(color + Thread.currentThread().getName() + ": i = " + i);
-//    }
+    // for (i = 10; i > 0; i--) {
+    //   System.out.println(color + Thread.currentThread().getName() + ": i = " + i);
+    // }
 
     // 1) Using local variable
 
@@ -107,8 +105,8 @@ public class CountDown {
     // It uses each `thread stack`.
 
     // [IMPORTANT] j = 10: thread (stack), j--: thread (stack), System.out.print: thread (stack)
-//     for (int j = 10; j > 0; j--) {
-//        System.out.println(color + Thread.currentThread().getName() + ": j = " + j);
-//     }
+    // for (int j = 10; j > 0; j--) {
+    //    System.out.println(color + Thread.currentThread().getName() + ": j = " + j);
+    // }
   }
 }
