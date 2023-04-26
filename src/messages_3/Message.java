@@ -5,9 +5,13 @@ public class Message {
   private boolean empty = true;
 
   public synchronized String read() {
+    System.out.println("read empty: " + empty);
     // [Consumer]
     while (empty) {
+
     }
+
+
 
     empty = true;
     return message;
@@ -15,8 +19,10 @@ public class Message {
 
   // [Producer]
   public synchronized void write(String message) {
-    while (!empty) {
+    System.out.println("write empty: " + empty);
 
+    while (!empty) {
+//      System.out.println("write!!!!");
     }
 
     empty = false;

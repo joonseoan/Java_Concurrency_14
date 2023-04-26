@@ -81,7 +81,7 @@ import messages_3.RunMessages;
 public class Main {
   public static void main(String[] args) {
     System.out.println("");
-    System.out.println("---------------- Racing (Synchronization) -------------------");
+    System.out.println("---------------- Racing (Producer and Consumer) -------------------");
     System.out.println("");
 
     RunMessages.runMessages1();
