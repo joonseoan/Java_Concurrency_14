@@ -13,6 +13,11 @@ public class RunMessages {
      *
      * Now thread looping is called "deadlock".
      * This can be solved with wait and notify.
+     * So when a thread calls the `wait` method,
+     * it will suspend execution and release whatever locks `lock` (loop) is holding
+     * until another thread issues a notification that something important has happened.
+     * The other thread issues the notification by calling `notify` or `notifyAll` methods.
+     *
      *
      */
     (new Thread(new Writer(message))).start();

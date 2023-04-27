@@ -93,7 +93,7 @@ public class Main {
     System.out.println("");
 
     // FIELD VARIABLE THREAD WITH SYNCHRONIZED
-    RunCounter.runRacing();
+//    RunCounter.runRacing();
 
     System.out.println("");
     System.out.println("---------------- Interfering -------------------");
