@@ -1,5 +1,4 @@
-import counter_2.RunCounter;
-import messages_3.RunMessages;
+import concurrent_lib_4.RunConcurrent;
 
 /**
  * A `process` is a unit of execution that has its own memory space.
@@ -81,22 +80,28 @@ import messages_3.RunMessages;
 public class Main {
   public static void main(String[] args) {
     System.out.println("");
-    System.out.println("---------------- Racing (Producer and Consumer) -------------------");
+    System.out.println("---------------- Producer and Consumer with easy concurrency lib -------------------");
     System.out.println("");
 
-    RunMessages.runMessages1();
+    RunConcurrent.runConcurrent();
+
+    System.out.println("");
+    System.out.println("---------------- Producer and Consumer Concept (two threads) -------------------");
+    System.out.println("");
+
+//    RunMessages.runMessages1();
 
     // [IMPORTANT!]
     // https://www.w3schools.com/java/java_threads.asp
     System.out.println("");
-    System.out.println("---------------- Racing (Synchronization) -------------------");
+    System.out.println("---------------- Racing (Synchronization - One thread) -------------------");
     System.out.println("");
 
     // FIELD VARIABLE THREAD WITH SYNCHRONIZED
 //    RunCounter.runRacing();
 
     System.out.println("");
-    System.out.println("---------------- Interfering -------------------");
+    System.out.println("---------------- Interfering Concept without synchronization-------------------");
     System.out.println("");
 
     // FIELD VARIABLE THREAD WITHOUT SYNCHRONIZED
@@ -105,143 +110,145 @@ public class Main {
 
     /* ----------------------- Basic Concept -----------------------*/
     System.out.println("");
-    System.out.println("--------------------- Basic Concept --------------" );
+    System.out.println("--------------------- Basic Concept (sleep, join, and interrupt without synchronization)--------------" );
     System.out.println("");
 
-    // single process in a heap memory
-    // There is a main thread in `System`
-    System.out.println(ThreadColor.ANSI_PURPLE + "Hello from the 'main thread'.");
+    // When reviewing this area, please just use the most left the double "//".
 
-    // 1. [subclass]
-    // [Kick off a thread that is going to run some code]
-    // So we need a way to tell the thread what code want to run.
-    // *** We are going to do that by creating a subclass of the thread class and then
-    // overriding the `run` method. So rather than creating a thread instance,
-    // we are going to create an instance of our subclass by extending `Thread` interface.
-    Thread anotherThread1 = new AnotherThread();
-    // we will use `start` method. What it does is enable JVM to run the `run` method for the thread.
-    anotherThread1.start();
-
-    // [IMPORTANT!!!!]
-    // using `setName` to deliver the parameter to the `run` method.
-    Thread anotherThread2 = new AnotherThread2();
-    anotherThread2.setName("==== Another Thread2 ====");
-
-    // [IMPORTANT]
-    // if we use `anotherThread2.run()`, it won't generate an error but
-    // it will bring up the strange result.
-    // anotherThread2.run(); // it show "Hello from main method!!!"
-
-    anotherThread2.start();
-
-    // 2. [subclass - using anonymous class.]
-    // when using anonymous class, we have to start the thread immediately,[IMPORTANT!!!]
-    // so that another consideration when deciding whether to use a named or an anonymous class.
-    // Of course, the name class is the one that we already defined above, for example.
-    // In result, it runs after `anotherThread`, not in the `first thread`
-    // Once again, the Thread does not generate the same order with main thread.!
-    new Thread() {
-      public void run() {
-        System.out.println(ThreadColor.ANSI_GREEN + "Hello from the anonymous class thread.");
-      }
-    }.start();
-
-    /**
-     * When using subclass and when using Runnable Interface?
-     * The most of time, developers use the Runnable way of doing things.
-     * The reason is that it is more convenient and there is also many methods
-     * in the Java api that want a Runnable interface passed to them.
-     *
-     * For example since the introduction of Lambda expressions, it becomes more convenient
-     * to use Runnable interface. So when we have a choice because we are not calling a method
-     * that requires one or the other, there is not really a right or wrong answer.
-     * But the most of the developer use Runnable interface because it is more flexible.
-     */
-
-    // Thread terminates when it returns from its run method.
-
-    // 3. [Runnable Interface]
-    // It is similar to the way of creating threads, we need to implement `run` method.
-    // However, instead of implementing the run method of a class that subclass thread,
-    // We can have any class implement the runnable interface and then ---> only run method can be available?
-    // all we have to do is to add a run method to that class.
-    // Of course, we will then want to write the code in the run method.
-    Thread myRunnableClass = new Thread(new MyRunnable());
-    // need to use start method as well.
-    myRunnableClass.start();
-
-
-    // 4. [Runnable Interface - using anonymous class]
-    Thread myRunnableAnonymousClass = new Thread(
-            new MyRunnable() {
-              @Override
-              public void run() {
-                System.out.println(ThreadColor.ANSI_RED + "Hello from the anonymous class's implementation of run()");
-              }
-            }
-    );
-    myRunnableAnonymousClass.start();
-
-    // It is for #6 to see interrupt and join
-    Thread runnableAnonymousJoin = new Thread(
-            new MyRunnable() {
-              @Override
-              public void run() {
-                try {
-                  // `2000`, just in case anotherThread2 is not terminated,
-                  // the app will be crashed. So just in case, it adds the timeout.
-                  // without 2000, we need to wait for 3 seconds.
-                  //  anotherThread2.join(2000);
-
-                  // join should work with sleep only?
-                  anotherThread2.join();
-
-                  // It works only after the `anotherThread2` is terminated.
-                  System.out.println(ThreadColor.ANSI_RED + "AnotherThread terminated or timed out. I am running again.");
-
-                  // [IMPORTANT]
-                  // Like sleep, `join` also can be terminated prematurely if it is interrupted by another method.
-                } catch (InterruptedException err) {
-                  System.out.println(ThreadColor.ANSI_RED + "I could not wait after all. I was interrupted");
-                }
-              }
-            }
-    );
-
-    runnableAnonymousJoin.start();
-
-    // 5. [Interrupt the subclass containing sleep
-    // anotherThread2 is immediately terminated.
-    // anotherThread2.interrupt();
-
-    /**
-     * So by using sleep and interrupt methods,
-     * we have seen that we can put a thread to sleep, and it is possible to get it to wake up periodically
-     * to see if there's any work for the thread to do.
-     *
-     * So lets say we have got a situation where we know that a thread can't continue
-     * to execute (might be because of a long calculation) until another thread's terminated
-     * For example, we might know that there won't be any data to process until the thread
-     * is complete fetching the data from database. So in that scenario rather than waking up the thread
-     * periodically to see if there's any data, we can `join` the thread to the thread that is fetching
-     * the data. When we join the thread, what happens is the first thread will wait for the second thread
-     * to terminate and then it will continue to execute.
-     *
-     * Join can be used with Runnable or subclass thread.
-     */
-
-    // 6. Join with Runnable Interface
-
-    // Now this runs in different order. It can run at the second
-    // or third after Thread subclass works.
-    // It means that we can't guarantee that it runs on the consistent order.
-    System.out.println(ThreadColor.ANSI_PURPLE + "Hello again from the 'main thread'!!!");
-
-    // [!!!!IMPORTANT!!!]
-    // It will generate IllegalThreadStateException.
-    // Using a subclass of Thread means that we have to define 'the run method once'
-    // but we cannot reuse the same instance!!!!
-    // BTW, we can create another instance and can call it (It is ok.)
-    //    anotherThread.start();
+//    // single process in a heap memory
+//    // There is a main thread in `System`
+//    System.out.println(ThreadColor.ANSI_PURPLE + "Hello from the 'main thread'.");
+//
+//    // 1. [subclass]
+//    // [Kick off a thread that is going to run some code]
+//    // So we need a way to tell the thread what code want to run.
+//    // *** We are going to do that by creating a subclass of the thread class and then
+//    // overriding the `run` method. So rather than creating a thread instance,
+//    // we are going to create an instance of our subclass by extending `Thread` interface.
+//    Thread anotherThread1 = new AnotherThread();
+//    // we will use `start` method. What it does is enable JVM to run the `run` method for the thread.
+//    anotherThread1.start();
+//
+//    // [IMPORTANT!!!!]
+//    // using `setName` to deliver the parameter to the `run` method.
+//    Thread anotherThread2 = new AnotherThread2();
+//    anotherThread2.setName("==== Another Thread2 ====");
+//
+//    // [IMPORTANT]
+//    // if we use `anotherThread2.run()`, it won't generate an error but
+//    // it will bring up the strange result.
+//    // anotherThread2.run(); // it show "Hello from main method!!!"
+//
+//    anotherThread2.start();
+//
+//    // 2. [subclass - using anonymous class.]
+//    // when using anonymous class, we have to start the thread immediately,[IMPORTANT!!!]
+//    // so that another consideration when deciding whether to use a named or an anonymous class.
+//    // Of course, the name class is the one that we already defined above, for example.
+//    // In result, it runs after `anotherThread`, not in the `first thread`
+//    // Once again, the Thread does not generate the same order with main thread.!
+//    new Thread() {
+//      public void run() {
+//        System.out.println(ThreadColor.ANSI_GREEN + "Hello from the anonymous class thread.");
+//      }
+//    }.start();
+//
+//    /**
+//     * When using subclass and when using Runnable Interface?
+//     * The most of time, developers use the Runnable way of doing things.
+//     * The reason is that it is more convenient and there is also many methods
+//     * in the Java api that want a Runnable interface passed to them.
+//     *
+//     * For example since the introduction of Lambda expressions, it becomes more convenient
+//     * to use Runnable interface. So when we have a choice because we are not calling a method
+//     * that requires one or the other, there is not really a right or wrong answer.
+//     * But the most of the developer use Runnable interface because it is more flexible.
+//     */
+//
+//    // Thread terminates when it returns from its run method.
+//
+//    // 3. [Runnable Interface]
+//    // It is similar to the way of creating threads, we need to implement `run` method.
+//    // However, instead of implementing the run method of a class that subclass thread,
+//    // We can have any class implement the runnable interface and then ---> only run method can be available?
+//    // all we have to do is to add a run method to that class.
+//    // Of course, we will then want to write the code in the run method.
+//    Thread myRunnableClass = new Thread(new MyRunnable());
+//    // need to use start method as well.
+//    myRunnableClass.start();
+//
+//
+//    // 4. [Runnable Interface - using anonymous class]
+//    Thread myRunnableAnonymousClass = new Thread(
+//            new MyRunnable() {
+//              @Override
+//              public void run() {
+//                System.out.println(ThreadColor.ANSI_RED + "Hello from the anonymous class's implementation of run()");
+//              }
+//            }
+//    );
+//    myRunnableAnonymousClass.start();
+//
+//    // It is for #6 to see interrupt and join
+//    Thread runnableAnonymousJoin = new Thread(
+//            new MyRunnable() {
+//              @Override
+//              public void run() {
+//                try {
+//                  // `2000`, just in case anotherThread2 is not terminated,
+//                  // the app will be crashed. So just in case, it adds the timeout.
+//                  // without 2000, we need to wait for 3 seconds.
+//                  //  anotherThread2.join(2000);
+//
+//                  // join should work with sleep only?
+//                  anotherThread2.join();
+//
+//                  // It works only after the `anotherThread2` is terminated.
+//                  System.out.println(ThreadColor.ANSI_RED + "AnotherThread terminated or timed out. I am running again.");
+//
+//                  // [IMPORTANT]
+//                  // Like sleep, `join` also can be terminated prematurely if it is interrupted by another method.
+//                } catch (InterruptedException err) {
+//                  System.out.println(ThreadColor.ANSI_RED + "I could not wait after all. I was interrupted");
+//                }
+//              }
+//            }
+//    );
+//
+//    runnableAnonymousJoin.start();
+//
+//    // 5. [Interrupt the subclass containing sleep
+//    // anotherThread2 is immediately terminated.
+//    // anotherThread2.interrupt();
+//
+//    /**
+//     * So by using sleep and interrupt methods,
+//     * we have seen that we can put a thread to sleep, and it is possible to get it to wake up periodically
+//     * to see if there's any work for the thread to do.
+//     *
+//     * So lets say we have got a situation where we know that a thread can't continue
+//     * to execute (might be because of a long calculation) until another thread's terminated
+//     * For example, we might know that there won't be any data to process until the thread
+//     * is complete fetching the data from database. So in that scenario rather than waking up the thread
+//     * periodically to see if there's any data, we can `join` the thread to the thread that is fetching
+//     * the data. When we join the thread, what happens is the first thread will wait for the second thread
+//     * to terminate and then it will continue to execute.
+//     *
+//     * Join can be used with Runnable or subclass thread.
+//     */
+//
+//    // 6. Join with Runnable Interface
+//
+//    // Now this runs in different order. It can run at the second
+//    // or third after Thread subclass works.
+//    // It means that we can't guarantee that it runs on the consistent order.
+//    System.out.println(ThreadColor.ANSI_PURPLE + "Hello again from the 'main thread'!!!");
+//
+//    // [!!!!IMPORTANT!!!]
+//    // It will generate IllegalThreadStateException.
+//    // Using a subclass of Thread means that we have to define 'the run method once'
+//    // but we cannot reuse the same instance!!!!
+//    // BTW, we can create another instance and can call it (It is ok.)
+//    //    anotherThread.start();
   }
 }
